@@ -106,6 +106,15 @@ void lcdInit(){
   lcd.createChar(7,block);
 }
 
+void showSelector(byte pos){
+  for(int i=1; i<4; i++){
+    lcd.setCursor(0,i);
+    lcd.print(" ");
+  }
+  lcd.setCursor(0, pos);
+  lcd.print(">");
+}
+
 void bigDigits(byte x, byte y, int value){
   //values from 0 to 9999
   if (value > 9999) value = 9999;

@@ -11,4 +11,5 @@ void custom8(byte x, byte y);
 void custom9(byte x, byte y);
 void selectLcdNumber(byte x, byte y, byte number);
 void clearnumber(byte x, byte y);
+void showSelector(byte pos);
 void bigDigits(byte x, byte y, int value);
