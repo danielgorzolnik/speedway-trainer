@@ -1,0 +1,14 @@
+void lcdInit();
+void custom0(byte x, byte y);
+void custom1(byte x, byte y);
+void custom2(byte x, byte y);
+void custom3(byte x, byte y);
+void custom4(byte x, byte y);
+void custom5(byte x, byte y);
+void custom6(byte x, byte y);
+void custom7(byte x, byte y);
+void custom8(byte x, byte y);
+void custom9(byte x, byte y);
+void selectLcdNumber(byte x, byte y, byte number);
+void clearnumber(byte x, byte y);
+void bigDigits(byte x, byte y, int value);

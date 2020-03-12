@@ -2,18 +2,23 @@
 #include "pins.h"
 #include "software.h"
 #include "hardware.h"
+#include "lcd_characters.h"
 
 //variables
 uint8_t encoder = 0, encoder_t = 0;
 boolean encoderBtnState = digitalRead(encoder_btn);
+int encoderNumber = 0;
+int encoderNumber_t = 0;
 
 //objects
 LiquidCrystal lcd(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7);
 
 void setup(){
   configPins();
-  lcd.begin(lcd_columns, lcd_rows); //init lcd display
-  lcd.print("speedway trainer");
+  lcdInit();
+  lcd.setCursor(0,0);
+  //lcd.print("speedwaytrainspeedwa");
+  bigDigits(1,1,encoderNumber);
 
   Serial.begin(9600);
   encoder = encoderRead();
@@ -36,14 +41,28 @@ void loop() {
     encoderBtnState = digitalRead(encoder_btn);
     delay(100);
   }
+
+
+
+
+  
+  if (encoderNumber != encoderNumber_t){
+    encoderNumber_t = encoderNumber;
+    bigDigits(1,1,encoderNumber);
+    Serial.println(encoderNumber);
+  }
+  
+  
 }
 
 void encoderLeft(){ //encoder move - left
   Serial.println("left");
+  encoderNumber--;
 }
 
 void encoderRight(){ //encoder move - right
   Serial.println("right");
+  encoderNumber++;
 }
 
 void encoderButton(){

@@ -11,8 +11,8 @@
 #define lcd_pwm 6
 
 //encoder
-#define encoder_in1 2
-#define encoder_in2 3
+#define encoder_in1 3
+#define encoder_in2 2
 #define encoder_btn 15 //A1
 
 //handle
