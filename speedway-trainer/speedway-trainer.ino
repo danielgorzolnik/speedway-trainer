@@ -10,6 +10,7 @@ boolean encoderBtnState = digitalRead(encoder_btn);
 byte menu = main_menu;
 byte menuSelectorPos = 1;
 byte menuSelectorPage = 1;
+byte displayBacklight = 100;
 int encoderNumber = 0;
 int encoderNumber_t = 0;
 
@@ -20,6 +21,7 @@ void setup(){
   configPins();
   lcdInit();
   showMenu();
+  setBacklight(displayBacklight);
   
   Serial.begin(9600);
   encoder = encoderRead();
@@ -76,6 +78,24 @@ void showMenu(){
     lcd.setCursor(1, 3);
     if (menuSelectorPage == 1) lcd.print("3.Obie rece");
   }
+  else if (menu == backlight_menu){
+    lcd.setCursor(1, 0);
+    lcd.print("PODSWIETLENIE LCD");
+    if (displayBacklight == 100) {
+      bigDigits(4, 2, displayBacklight);
+      lcd.setCursor(16, 3);
+    }
+    else if (displayBacklight > 9) {
+      bigDigits(6, 2, displayBacklight);
+      lcd.setCursor(14, 3);
+    }
+    else if (displayBacklight < 10) {
+      bigDigits(8, 2, displayBacklight);
+      lcd.setCursor(12, 3);
+    }
+    lcd.print("%");
+    setBacklight(displayBacklight);
+  }
 }
 
 void encoderLeft(){ //encoder move - left
@@ -96,6 +116,13 @@ void encoderLeft(){ //encoder move - left
     }
     showSelector(menuSelectorPos);
   }
+  else if (menu == backlight_menu){
+    displayBacklight--;
+    if (displayBacklight < 1) {
+      displayBacklight = 1;
+    }
+    showMenu();
+  }
 }
 
 void encoderRight(){ //encoder move - right
@@ -105,7 +132,7 @@ void encoderRight(){ //encoder move - right
     else if (menuSelectorPos < 1) menuSelectorPos = 3;
     showSelector(menuSelectorPos);
   }
-    else if (menu == program_menu){
+  else if (menu == program_menu){
     menuSelectorPos++;
     if (menuSelectorPos > 3 || (menuSelectorPos == 3 && menuSelectorPage == 2)) {
       menuSelectorPos = 1;
@@ -115,6 +142,13 @@ void encoderRight(){ //encoder move - right
     }
     showSelector(menuSelectorPos);
   }
+  else if (menu == backlight_menu){
+    displayBacklight++;
+    if (displayBacklight > 100) {
+      displayBacklight = 100;
+    }
+    showMenu();
+  }
 }
 
 void encoderButton(){
@@ -123,7 +157,7 @@ void encoderButton(){
       menu = program_menu;
     }
     else if (menuSelectorPos == 2){
-      
+      menu = backlight_menu;
     }
     else if (menuSelectorPos == 3){
       
@@ -132,7 +166,7 @@ void encoderButton(){
     menuSelectorPage = 1;
     showMenu();
   }
-  else if (menu = program_menu) {
+  else if (menu == program_menu) {
     if (menuSelectorPos == 1){
       
     }
@@ -144,6 +178,12 @@ void encoderButton(){
     } 
     menuSelectorPos = 1;
     menuSelectorPage = 1;
+    showMenu();
+  }
+  else if (menu == backlight_menu) {
+    menuSelectorPos = 1;
+    menuSelectorPage = 1;
+    menu = main_menu;
     showMenu();
   }
 }

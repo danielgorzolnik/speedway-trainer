@@ -12,7 +12,6 @@ void configPins(){
   pinMode(encoder_in2, INPUT_PULLUP);
   pinMode(encoder_btn, INPUT_PULLUP);
   pinMode(lcd_pwm, OUTPUT);
-  analogWrite(lcd_pwm, 255);
 }
 
 uint8_t encoderRead() { //read encoder state
@@ -20,4 +19,10 @@ uint8_t encoderRead() { //read encoder state
   if(!digitalRead(encoder_in1)) val |= (1 << 1);
   if(!digitalRead(encoder_in2)) val |= (1 << 0);
   return val;
+}
+
+void setBacklight(byte value) {
+  byte pwmValue = (float)value * 2.55;
+  Serial.println(pwmValue);  
+  analogWrite(lcd_pwm, pwmValue);
 }
