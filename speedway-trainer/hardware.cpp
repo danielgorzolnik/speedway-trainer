@@ -32,6 +32,48 @@ void setBacklight(byte value) {
   analogWrite(lcd_pwm, pwmValue);
 }
 
+boolean checkHandlePushed(byte selectedHand){
+  if (selectedHand == 1) { //right 
+    if (digitalRead(handle_r_down) == 0 && digitalRead(handle_r_up) == 1) return true;
+    else return false;
+  }
+  else if (selectedHand == 2) { //left 
+    if (digitalRead(handle_l_down) == 0 && digitalRead(handle_l_up) == 1) return true;
+    else return false;
+  }
+
+  else if (selectedHand == 3 || selectedHand == 4) { //both
+    if ((digitalRead(handle_l_down) == 0 && digitalRead(handle_l_up) == 1) && (digitalRead(handle_r_down) == 0 && digitalRead(handle_r_up) == 1)) return true;
+    else return false;
+  }
+
+  else if (selectedHand == 5) { //any
+    if ((digitalRead(handle_l_down) == 0 && digitalRead(handle_l_up) == 1) || (digitalRead(handle_r_down) == 0 && digitalRead(handle_r_up) == 1)) return true;
+    else return false;
+  }
+}
+
+boolean checkHandleReleased(byte selectedHand){
+  if (selectedHand == 1) { //right 
+    if (digitalRead(handle_r_down) == 1 && digitalRead(handle_r_up) == 0) return true;
+    else return false;
+  }
+  else if (selectedHand == 2) { //left 
+    if (digitalRead(handle_l_down) == 1 && digitalRead(handle_l_up) == 0) return true;
+    else return false;
+  }
+
+  else if (selectedHand == 3 || selectedHand == 4) { //both
+    if ((digitalRead(handle_l_down) == 1 && digitalRead(handle_l_up) == 0) && (digitalRead(handle_r_down) == 1 && digitalRead(handle_r_up) == 0)) return true;
+    else return false;
+  }
+
+  else if (selectedHand == 5) { //any
+    if ((digitalRead(handle_l_down) == 1 && digitalRead(handle_l_up) == 0) || (digitalRead(handle_r_down) == 1 && digitalRead(handle_r_up) == 0)) return true;
+    else return false;
+  }
+}
+
 void clearPixels() {
   pixels.clear();
   pixels.show(); 

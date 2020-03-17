@@ -27,7 +27,7 @@ void setup(){
   showMenu();
   setBacklight(displayBacklight);
 
-  Timer1.initialize(10000); // divide 1000 = 1 ms
+  Timer1.initialize(1000); // divide 1000 = 1 ms
   Timer1.attachInterrupt(timerVoid);
   Serial.begin(9600);
   encoder = encoderRead();
@@ -120,6 +120,21 @@ void showMenu(){
     if (menuSelectorPage == 1) lcd.print("2.20 Startow");
     lcd.setCursor(1, 3);
     if (menuSelectorPage == 1) lcd.print("3.30 Startow");
+  }
+
+  else if (menu == wait_for_handle_menu){
+    lcd.setCursor(2, 0);
+    lcd.print("PRZYGOTUJ SIE!");
+    lcd.setCursor(3, 2);
+    String selectedHandString;
+    if (selectedHand == 1) selectedHandString = "prawa";
+    else if (selectedHand == 2) selectedHandString = "lewa";
+    else if (selectedHand == 3 || selectedHand == 4) selectedHandString = "obie";
+    selectedHandString = "wcisnij " + selectedHandString;
+    lcd.print(selectedHandString);
+    lcd.setCursor(7, 3);
+    if (selectedHand == 1 || selectedHand == 2) lcd.print("klamke");
+    else if (selectedHand == 3 || selectedHand == 4) lcd.print("klamki");
   }
 }
 
@@ -271,12 +286,17 @@ void encoderButton(){
 
 void timerVoid(void){
   //do in every 10ms
-
+  
   //end
   timerDivider++;
-  if (timerDivider > 10){
+  if (timerDivider > 100){
     //do in every 100ms
-
+    if (menu == wait_for_handle_menu){
+        if (checkHandlePushed(selectedHand)) greenPixels();
+        else redPixels();
+    }
+    else clearPixels();
+    
     //end
     timerDivider = 0;
   }
