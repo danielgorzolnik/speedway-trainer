@@ -11,11 +11,13 @@
 #define author_menu 4
 #define wait_for_handle_menu 5
 #define choose_number_of_starts_menu 6
-#define right_hand_menu 7
-#define left_hand_menu 8
-#define both_hand_menu 9
-#define random_hand_menu 10
+#define training_menu_wait 7
+#define training_menu_summary_single 8
+#define training_menu_summary_all 9
 
 //led strip config
 #define digital_led_count 8
 #define reverse_digital_led_strip 0 //only 0 or 1
+
+//time measure
+void cleanUserTimes();
