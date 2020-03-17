@@ -1,7 +1,10 @@
+#include <Adafruit_NeoPixel.h>
 #include <Arduino.h>
 #include "hardware.h"
 #include "pins.h"
 #include "software.h"
+
+Adafruit_NeoPixel pixels(digital_led_count, digital_led, NEO_GRB + NEO_KHZ800);
 
 void configPins(){
   pinMode(handle_r_up, INPUT_PULLUP);
@@ -12,6 +15,8 @@ void configPins(){
   pinMode(encoder_in2, INPUT_PULLUP);
   pinMode(encoder_btn, INPUT_PULLUP);
   pinMode(lcd_pwm, OUTPUT);
+  pixels.begin();
+  clearPixels();
 }
 
 uint8_t encoderRead() { //read encoder state
@@ -25,4 +30,79 @@ void setBacklight(byte value) {
   byte pwmValue = (float)value * 2.55;
   Serial.println(pwmValue);  
   analogWrite(lcd_pwm, pwmValue);
+}
+
+void clearPixels() {
+  pixels.clear();
+  pixels.show(); 
+}
+
+void redPixels(){
+  clearPixels();
+  for(int i=0; i<digital_led_count; i++) {
+    pixels.setPixelColor(i, pixels.Color(255, 0, 0));
+  }
+  pixels.show(); 
+}
+
+void greenPixels(){
+  clearPixels();
+  for(int i=0; i<digital_led_count; i++) {
+    pixels.setPixelColor(i, pixels.Color(0, 255, 0));
+  }
+  pixels.show(); 
+}
+
+void bluePixels(){
+  clearPixels();
+  for(int i=0; i<digital_led_count; i++) {
+    pixels.setPixelColor(i, pixels.Color(0, 0, 255));
+  }
+  pixels.show(); 
+}
+
+void whitePixels(){
+  clearPixels();
+  for(int i=0; i<digital_led_count; i++) {
+    pixels.setPixelColor(i, pixels.Color(255, 255, 255));
+  }
+  pixels.show(); 
+}
+
+void leftHandlePixels(){
+  clearPixels();
+  for(int i=0; i<digital_led_count; i++) {
+    if (reverse_digital_led_strip == 0 && i < digital_led_count/2){
+      pixels.setPixelColor(i, pixels.Color(0, 255, 0));
+    }
+    else if (reverse_digital_led_strip == 0 && i >= digital_led_count/2){
+      pixels.setPixelColor(i, pixels.Color(255, 0, 0));
+    }
+    else if (reverse_digital_led_strip == 1 && i >= digital_led_count/2){
+      pixels.setPixelColor(i, pixels.Color(0, 255, 0));
+    }
+    else if (reverse_digital_led_strip == 1 && i < digital_led_count/2){
+      pixels.setPixelColor(i, pixels.Color(255, 0, 0));
+    }
+  }
+  pixels.show();
+}
+
+void rightHandlePixels(){
+  clearPixels();
+  for(int i=0; i<digital_led_count; i++) {
+    if (reverse_digital_led_strip == 0 && i >= digital_led_count/2){
+      pixels.setPixelColor(i, pixels.Color(255, 0, 0));
+    }
+    else if (reverse_digital_led_strip == 0 && i < digital_led_count/2){
+      pixels.setPixelColor(i, pixels.Color(0, 255, 0));
+    }
+    else if (reverse_digital_led_strip == 1 && i < digital_led_count/2){
+      pixels.setPixelColor(i, pixels.Color(0, 255, 0));
+    }
+    else if (reverse_digital_led_strip == 1 && i >= digital_led_count/2){
+      pixels.setPixelColor(i, pixels.Color(255, 0, 0));
+    }
+  }
+  pixels.show();
 }
