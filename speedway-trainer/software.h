@@ -9,11 +9,12 @@
 #define program_menu 2
 #define backlight_menu 3
 #define author_menu 4
-#define wait_for_handle menu 5
-#define right_hand_menu 6
-#define left_hand_menu 7
-#define both_hand_menu 8
-#define random_hand_menu 9
+#define wait_for_handle_menu 5
+#define choose_number_of_starts_menu 6
+#define right_hand_menu 7
+#define left_hand_menu 8
+#define both_hand_menu 9
+#define random_hand_menu 10
 
 //led strip config
 #define digital_led_count 8
