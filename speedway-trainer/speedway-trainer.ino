@@ -8,6 +8,7 @@
 //variables
 uint8_t encoder = 0, encoder_t = 0;
 boolean encoderBtnState = digitalRead(encoder_btn);
+boolean wasFalseStart = false;
 byte randomHandChoose = 0;
 byte timerDivider = 0;
 byte selectedHand = 0; //1-right, 2-left, 3-both, 4-random
@@ -68,7 +69,6 @@ void loop() {
 
 void showMenu(){
   lcd.clear();
-  Serial.println(menu);
   if (menu == main_menu){ //MAIN_MENU
     showSelector(menuSelectorPos);
     lcd.setCursor(8, 0);
@@ -174,9 +174,9 @@ void showMenu(){
     }
     lcd.setCursor(5,2);
     lcd.print("PUSC " + selectedHandString);
-    lcd.setCursor(6,3);
-    if (selectedHand == 3 || (selectedHand == 4 && randomHandChoose == 3)) lcd.print("MANETKI");
-    else lcd.print("MANETKE");
+    lcd.setCursor(7,3);
+    if (selectedHand == 3 || (selectedHand == 4 && randomHandChoose == 3)) lcd.print("KLAMIKI");
+    else lcd.print("KLAMKE");
   }
 
   else if (menu == training_summary_single_menu){ // TRAINING SUMMARY SINGLE MENU
@@ -194,10 +194,11 @@ void showMenu(){
     lcd.print("ms");
   }
 
-  else if (menu == training_summary_all_menu){
+  else if (menu == training_summary_all_menu){ //TRAINING SUMMARY ALL MENU
     int avg = calculateTimeAvg();
     int tmin = calculateTimeMin();
     int tmax = calculateTimeMax();
+    if (tmin == 10000) tmin = 0;
     lcd.setCursor(2, 0);
     lcd.print("WYNIKI TRENINGU");
     lcd.setCursor(0, 1);
@@ -208,11 +209,34 @@ void showMenu(){
       bigDigits(1, 2, avg);
       lcd.setCursor(17, 3);
     }
+    else if (avg <= 0){
+      bigDigits(8, 2, avg);
+      lcd.setCursor(12, 3);
+    }
     else {
       bigDigits(4, 2, avg);
       lcd.setCursor(16, 3);
     }
     lcd.print("ms");
+  }
+
+  else if (menu == training_false_start_menu){ // TRAINING FALSE START MENU
+    lcd.setCursor(4, 0);
+    String selectedHandString = "START: ";
+    selectedHandString = selectedHandString + String(currentNumberOfStarts) + "/" + String(selectedNumberOfStarts);
+    lcd.print(selectedHandString);
+    lcd.setCursor(5,2);
+    lcd.print("FALSTART!");
+    
+  }
+  
+  else if (menu == training_long_time_menu){ // TRAINING LONG TIME MENU 
+    lcd.setCursor(4, 0);
+    String selectedHandString = "START: ";
+    selectedHandString = selectedHandString + String(currentNumberOfStarts) + "/" + String(selectedNumberOfStarts);
+    lcd.print(selectedHandString);
+    lcd.setCursor(4,2);
+    lcd.print("ZBYT DLUGO!");
   }
 }
 
@@ -370,7 +394,7 @@ void encoderButton(){
     showMenu();
   }
 
-  else if (menu == training_summary_all_menu){
+  else if (menu == training_summary_all_menu){ 
     menu = main_menu;
     menuSelectorPos = 1;
     menuSelectorPage = 1;
@@ -394,6 +418,42 @@ void timerVoid(void){
         else if (randomHandChoose == 3) greenPixels();
       }
     }
+    //false start detection
+    else {
+      boolean falseStart = false;
+      boolean falseStart2 = false;
+      if (selectedHand == 1) {
+        falseStart = checkHandleReleased(1);
+        falseStart2 = !checkHandlePushed(1);
+      }
+      else if (selectedHand == 2) {
+        falseStart = checkHandleReleased(2);
+        falseStart2 = !checkHandlePushed(2);
+      }
+      else if (selectedHand == 3) {
+        falseStart = checkHandleReleased(3);
+        falseStart2 = !checkHandlePushed(3);
+      }
+      else if (selectedHand == 4){
+        if (randomHandChoose == 1) {
+          falseStart = checkHandleReleased(1);
+          falseStart2 = !checkHandlePushed(1);
+        }
+        else if (randomHandChoose == 2) {
+          falseStart = checkHandleReleased(2);
+          falseStart2 = !checkHandlePushed(2);
+        }
+        else if (randomHandChoose == 3) {
+          falseStart = checkHandleReleased(3);
+          falseStart2 = !checkHandlePushed(3);
+        }
+      }
+      if (falseStart || falseStart2) {
+        menu = training_false_start_menu;
+        showMenu();
+        bluePixels();
+      }
+    }
   }
 
   else if (menu == training_release_menu){
@@ -413,16 +473,24 @@ void timerVoid(void){
       clearPixels();
       showMenu();
     }
+    else {
+      if (userTimer*5 > 9990){
+        menu = training_long_time_menu;
+        showMenu();
+        bluePixels();
+      }
+    }
   }
 
-  else if (menu == training_summary_single_menu) {
+  else if (menu == training_summary_single_menu || menu == training_false_start_menu  || menu == training_long_time_menu ) {
     showSummaryTimer++;
-    if (showSummaryTimer > (single_summary_show_time /5)) {
+    if (showSummaryTimer > (single_summary_show_time / 5)) {
       currentNumberOfStarts++;
       
       if (currentNumberOfStarts > selectedNumberOfStarts) {
         currentNumberOfStarts = selectedNumberOfStarts;
         menu = training_summary_all_menu;
+        clearPixels();
       }
       else {
         menu = wait_for_handle_menu;

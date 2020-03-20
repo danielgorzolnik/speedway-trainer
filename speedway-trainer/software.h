@@ -15,6 +15,8 @@
 #define training_release_menu 8
 #define training_summary_single_menu 9
 #define training_summary_all_menu 10
+#define training_false_start_menu 11
+#define training_long_time_menu 12
 
 //led strip config
 #define digital_led_count 8
