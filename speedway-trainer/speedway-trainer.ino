@@ -68,6 +68,7 @@ void loop() {
 
 void showMenu(){
   lcd.clear();
+  Serial.println(menu);
   if (menu == main_menu){ //MAIN_MENU
     showSelector(menuSelectorPos);
     lcd.setCursor(8, 0);
@@ -178,7 +179,7 @@ void showMenu(){
     else lcd.print("MANETKE");
   }
 
-  else if (training_summary_single_menu){ // TRAINING SUMMARY SINGLE MENU
+  else if (menu == training_summary_single_menu){ // TRAINING SUMMARY SINGLE MENU
     int userResult = userTimer * 5;
     lcd.setCursor(5,0);
     lcd.print("Twoj wynik");
@@ -191,6 +192,9 @@ void showMenu(){
       lcd.setCursor(16, 3);
     }
     lcd.print("ms");
+  }
+
+  else if (menu == training_summary_all_menu){
   }
 }
 
@@ -319,7 +323,7 @@ void encoderButton(){
   else if (menu == choose_number_of_starts_menu) { //CHOOSE NUMBER OF STARTS MENU
     if (menuSelectorPos == 1){
       if (menuSelectorPage == 1){
-         selectedNumberOfStarts = 10;
+         selectedNumberOfStarts = 3;
          menu = wait_for_handle_menu;
       }
       else {
@@ -388,15 +392,16 @@ void timerVoid(void){
     showSummaryTimer++;
     if (showSummaryTimer > (single_summary_show_time /5)) {
       currentNumberOfStarts++;
-      showSummaryTimer = 0;
+      
       if (currentNumberOfStarts > selectedNumberOfStarts) {
+        currentNumberOfStarts = selectedNumberOfStarts;
         menu = training_summary_all_menu;
-        showMenu();
       }
       else {
         menu = wait_for_handle_menu;
-        showMenu();
       }
+      showSummaryTimer = 0;
+      showMenu();
     }
     
   }
