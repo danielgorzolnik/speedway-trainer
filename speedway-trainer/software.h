@@ -23,4 +23,5 @@
 //time measure
 #define min_timer_wait 2000
 #define max_timer_wait 3000
+#define single_summary_show_time 3000
 void cleanUserTimes();

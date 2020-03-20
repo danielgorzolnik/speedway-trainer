@@ -21,6 +21,7 @@ int encoderNumber = 0;
 int encoderNumber_t = 0;
 int mainTimer = 0;
 int userTimer=0;
+int showSummaryTimer = 0;
 int waitTime=0;
 
 
@@ -177,9 +178,19 @@ void showMenu(){
     else lcd.print("MANETKE");
   }
 
-  else if (training_summary_single_menu){
-    lcd.setCursor(0,0);
-    lcd.print(userTimer*5);
+  else if (training_summary_single_menu){ // TRAINING SUMMARY SINGLE MENU
+    int userResult = userTimer * 5;
+    lcd.setCursor(5,0);
+    lcd.print("Twoj wynik");
+    if (userResult > 999){
+      bigDigits(1, 2, userResult);
+      lcd.setCursor(17, 3);
+    }
+    else {
+      bigDigits(4, 2, userResult);
+      lcd.setCursor(16, 3);
+    }
+    lcd.print("ms");
   }
 }
 
@@ -371,6 +382,23 @@ void timerVoid(void){
       clearPixels();
       showMenu();
     }
+  }
+
+  else if (menu == training_summary_single_menu) {
+    showSummaryTimer++;
+    if (showSummaryTimer > (single_summary_show_time /5)) {
+      currentNumberOfStarts++;
+      showSummaryTimer = 0;
+      if (currentNumberOfStarts > selectedNumberOfStarts) {
+        menu = training_summary_all_menu;
+        showMenu();
+      }
+      else {
+        menu = wait_for_handle_menu;
+        showMenu();
+      }
+    }
+    
   }
   
   //end
