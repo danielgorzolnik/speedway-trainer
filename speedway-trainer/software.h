@@ -25,3 +25,7 @@
 #define max_timer_wait 3000
 #define single_summary_show_time 3000
 void cleanUserTimes();
+void addTimeToResult(byte numberOfTraining, int result);
+int calculateTimeAvg();
+int calculateTimeMin();
+int calculateTimeMax();

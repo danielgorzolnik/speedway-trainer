@@ -195,6 +195,24 @@ void showMenu(){
   }
 
   else if (menu == training_summary_all_menu){
+    int avg = calculateTimeAvg();
+    int tmin = calculateTimeMin();
+    int tmax = calculateTimeMax();
+    lcd.setCursor(2, 0);
+    lcd.print("WYNIKI TRENINGU");
+    lcd.setCursor(0, 1);
+    lcd.print("Min: " + String(tmin));
+    lcd.setCursor(10, 1);
+    lcd.print("Max: " + String(tmax));
+    if (avg > 999){
+      bigDigits(1, 2, avg);
+      lcd.setCursor(17, 3);
+    }
+    else {
+      bigDigits(4, 2, avg);
+      lcd.setCursor(16, 3);
+    }
+    lcd.print("ms");
   }
 }
 
@@ -338,6 +356,7 @@ void encoderButton(){
       selectedNumberOfStarts = 30;
       menu = wait_for_handle_menu;
     }
+    cleanUserTimes();
     currentNumberOfStarts = 1;
     menuSelectorPos = 1;
     menuSelectorPage = 1;
@@ -346,6 +365,13 @@ void encoderButton(){
   else if (menu == wait_for_handle_menu) { // WAIT FOR HANDLE PUSH
     clearPixels();
     menu = choose_number_of_starts_menu;
+    menuSelectorPos = 1;
+    menuSelectorPage = 1;
+    showMenu();
+  }
+
+  else if (menu == training_summary_all_menu){
+    menu = main_menu;
     menuSelectorPos = 1;
     menuSelectorPage = 1;
     showMenu();
@@ -382,6 +408,7 @@ void timerVoid(void){
       else if (randomHandChoose == 3) released = checkHandleReleased(3);
     }
     if (released) {
+      addTimeToResult(currentNumberOfStarts, userTimer * 5);
       menu = training_summary_single_menu;
       clearPixels();
       showMenu();
