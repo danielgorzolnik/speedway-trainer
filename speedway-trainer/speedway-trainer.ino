@@ -8,6 +8,7 @@
 //variables
 uint8_t encoder = 0, encoder_t = 0;
 boolean encoderBtnState = digitalRead(encoder_btn);
+byte randomHandChoose = 0;
 byte timerDivider = 0;
 byte selectedHand = 0; //1-right, 2-left, 3-both, 4-random
 byte selectedNumberOfStarts = 0;
@@ -18,9 +19,9 @@ byte menuSelectorPage = 1;
 byte displayBacklight = 100;
 int encoderNumber = 0;
 int encoderNumber_t = 0;
-unsigned int mainTimer = 0;
-unsigned int userTimer=0;
-unsigned int waitTime=0;
+int mainTimer = 0;
+int userTimer=0;
+int waitTime=0;
 
 
 //objects
@@ -34,6 +35,7 @@ void setup(){
 
   Timer1.initialize(5000); // divide 1000 = 1 ms
   Timer1.attachInterrupt(timerVoid);
+  randomSeed(analogRead(A0));
   Serial.begin(9600);
   encoder = encoderRead();
 }
@@ -146,16 +148,38 @@ void showMenu(){
     else if (selectedHand == 3 || selectedHand == 4) lcd.print("klamki");
   }
   
-  else if(menu == training_menu_wait){ // TRAINING MENU
+  else if(menu == training_wait_menu){ // TRAINING WAIT MENU
     lcd.setCursor(3, 0);
     lcd.print("PRZYGOTUJ SIE!");
     lcd.setCursor(4, 1);
     String selectedHandString = "START: ";
     selectedHandString = selectedHandString + String(currentNumberOfStarts) + "/" + String(selectedNumberOfStarts);
     lcd.print(selectedHandString);
-    if (userTimer > 0) {
-      
+  }
+
+   else if(menu == training_release_menu){ // TRAINING RELEASE MENU
+    lcd.setCursor(4, 0);
+    String selectedHandString = "START: ";
+    selectedHandString = selectedHandString + String(currentNumberOfStarts) + "/" + String(selectedNumberOfStarts);
+    lcd.print(selectedHandString);
+    if (selectedHand == 1) selectedHandString = "PRAWA";
+    else if (selectedHand == 2) selectedHandString = "LEWA";
+    else if (selectedHand == 3) selectedHandString = "OBIE";
+    else if (selectedHand == 4){
+      if (randomHandChoose == 1) selectedHandString = "PRAWA";
+      else if (randomHandChoose == 2) selectedHandString = "LEWA";
+      else if (randomHandChoose == 3) selectedHandString = "OBIE";
     }
+    lcd.setCursor(5,2);
+    lcd.print("PUSC " + selectedHandString);
+    lcd.setCursor(6,3);
+    if (selectedHand == 3 || (selectedHand == 4 && randomHandChoose == 3)) lcd.print("MANETKI");
+    else lcd.print("MANETKE");
+  }
+
+  else if (training_summary_single_menu){
+    lcd.setCursor(0,0);
+    lcd.print(userTimer*5);
   }
 }
 
@@ -305,6 +329,7 @@ void encoderButton(){
     showMenu();
   }
   else if (menu == wait_for_handle_menu) { // WAIT FOR HANDLE PUSH
+    clearPixels();
     menu = choose_number_of_starts_menu;
     menuSelectorPos = 1;
     menuSelectorPage = 1;
@@ -314,10 +339,36 @@ void encoderButton(){
 
 void timerVoid(void){
   //do in every 5ms
-  if (menu == wait_for_handle_menu){
+  if (menu == training_wait_menu){
     mainTimer++;
     if (mainTimer >= waitTime){
-      userTimer++;
+      menu = training_release_menu;
+      showMenu();
+      if (selectedHand == 1) rightHandlePixels();
+      else if (selectedHand == 2) leftHandlePixels();
+      else if (selectedHand == 3) greenPixels();
+      else if (selectedHand == 4){
+        if (randomHandChoose == 1) rightHandlePixels();
+        else if (randomHandChoose == 2) leftHandlePixels();
+        else if (randomHandChoose == 3) greenPixels();
+      }
+    }
+  }
+
+  else if (menu == training_release_menu){
+    userTimer++;
+    boolean released = false;
+    if (selectedHand == 1) released = checkHandleReleased(1);
+    else if (selectedHand == 2) released = checkHandleReleased(2);
+    else if (selectedHand == 3) released = checkHandleReleased(3);
+    else if (selectedHand == 4){
+      if (randomHandChoose == 1) released = checkHandleReleased(1);
+      else if (randomHandChoose == 2) released = checkHandleReleased(2);
+      else if (randomHandChoose == 3) released = checkHandleReleased(3);
+    }
+    if (released) {
+      menu = training_summary_single_menu;
+      clearPixels();
       showMenu();
     }
   }
@@ -329,8 +380,9 @@ void timerVoid(void){
     if (menu == wait_for_handle_menu){
         if (checkHandlePushed(selectedHand)){
           //redPixels();
-          waitTime=random(2000, 12000);
-          menu = training_menu;
+          waitTime=int(random(min_timer_wait/5, max_timer_wait/5));
+          if (selectedHand == 4) randomHandChoose = byte(random(1, 4));
+          menu = training_wait_menu;
           showMenu();
           mainTimer=0;
           userTimer=0;
