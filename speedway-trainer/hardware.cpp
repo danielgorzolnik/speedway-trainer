@@ -118,13 +118,13 @@ void leftHandlePixels(){
       pixels.setPixelColor(i, pixels.Color(0, 255, 0));
     }
     else if (reverse_digital_led_strip == 0 && i >= digital_led_count/2){
-      pixels.setPixelColor(i, pixels.Color(255, 0, 0));
+      pixels.setPixelColor(i, pixels.Color(0, 0, 0));
     }
     else if (reverse_digital_led_strip == 1 && i >= digital_led_count/2){
       pixels.setPixelColor(i, pixels.Color(0, 255, 0));
     }
     else if (reverse_digital_led_strip == 1 && i < digital_led_count/2){
-      pixels.setPixelColor(i, pixels.Color(255, 0, 0));
+      pixels.setPixelColor(i, pixels.Color(0, 0, 0));
     }
   }
   pixels.show();
@@ -137,13 +137,13 @@ void rightHandlePixels(){
       pixels.setPixelColor(i, pixels.Color(0, 255, 0));
     }
     else if (reverse_digital_led_strip == 0 && i < digital_led_count/2){
-      pixels.setPixelColor(i, pixels.Color(255, 0, 0));
+      pixels.setPixelColor(i, pixels.Color(0, 0, 0));
     }
     else if (reverse_digital_led_strip == 1 && i < digital_led_count/2){
       pixels.setPixelColor(i, pixels.Color(0, 255, 0));
     }
     else if (reverse_digital_led_strip == 1 && i >= digital_led_count/2){
-      pixels.setPixelColor(i, pixels.Color(255, 0, 0));
+      pixels.setPixelColor(i, pixels.Color(0, 0, 0));
     }
   }
   pixels.show();
