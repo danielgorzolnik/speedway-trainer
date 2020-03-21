@@ -30,10 +30,11 @@ int waitTime=0;
 LiquidCrystal lcd(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7);
 
 void setup(){
+  setBacklight(displayBacklight);
   configPins();
   lcdInit();
   showMenu();
-  setBacklight(displayBacklight);
+  
 
   Timer1.initialize(5000); // divide 1000 = 1 ms
   Timer1.attachInterrupt(timerVoid);
@@ -77,8 +78,6 @@ void showMenu(){
     lcd.print("1.Program");
     lcd.setCursor(1, 2);
     lcd.print("2.Podswietlenie");
-    lcd.setCursor(1, 3);
-    lcd.print("3.Autor");
   }
   else if (menu == program_menu){ //PROGRAM_MENU
     showSelector(menuSelectorPos);
@@ -243,8 +242,8 @@ void showMenu(){
 void encoderLeft(){ //encoder move - left
   if (menu == main_menu){
     menuSelectorPos--;
-    if (menuSelectorPos > 3) menuSelectorPos = 1;
-    else if (menuSelectorPos < 1) menuSelectorPos = 3;
+    if (menuSelectorPos > 2) menuSelectorPos = 1;
+    else if (menuSelectorPos < 1) menuSelectorPos = 2;
     showSelector(menuSelectorPos);
   }
   else if (menu == program_menu){
@@ -281,8 +280,8 @@ void encoderLeft(){ //encoder move - left
 void encoderRight(){ //encoder move - right
   if  (menu == main_menu){
     menuSelectorPos++;
-    if (menuSelectorPos > 3) menuSelectorPos = 1;
-    else if (menuSelectorPos < 1) menuSelectorPos = 3;
+    if (menuSelectorPos > 2) menuSelectorPos = 1;
+    else if (menuSelectorPos < 1) menuSelectorPos = 2;
     showSelector(menuSelectorPos);
   }
   else if (menu == program_menu){
@@ -321,9 +320,6 @@ void encoderButton(){
     }
     else if (menuSelectorPos == 2){
       menu = backlight_menu;
-    }
-    else if (menuSelectorPos == 3){
-      
     }
     menuSelectorPos = 1;
     menuSelectorPage = 1;
@@ -365,7 +361,7 @@ void encoderButton(){
   else if (menu == choose_number_of_starts_menu) { //CHOOSE NUMBER OF STARTS MENU
     if (menuSelectorPos == 1){
       if (menuSelectorPage == 1){
-         selectedNumberOfStarts = 3;
+         selectedNumberOfStarts = 10;
          menu = wait_for_handle_menu;
       }
       else {
@@ -517,7 +513,6 @@ void timerVoid(void){
         }
         else redPixels();
     }
-    
     //end
     timerDivider = 0;
   }

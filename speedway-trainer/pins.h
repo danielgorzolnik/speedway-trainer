@@ -23,6 +23,3 @@
 
 //digital led ws2812 and other
 #define digital_led 4
-
-//battery voltage read pin
-#define battery_voltage a0

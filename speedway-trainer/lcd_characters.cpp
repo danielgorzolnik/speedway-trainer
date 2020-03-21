@@ -104,6 +104,15 @@ void lcdInit(){
   lcd.createChar(5,LR);
   lcd.createChar(6,MB);
   lcd.createChar(7,block);
+  lcd.setCursor(8,0);
+  lcd.print("AUTOR");
+  lcd.setCursor(8, 1);
+  lcd.print("ostry");
+  lcd.setCursor(3, 2);
+  lcd.print("OPROGRAMOWANIE");
+  lcd.setCursor(5, 3);
+  lcd.print("dgorzolnik");
+  delay(3000);
 }
 
 void showSelector(byte pos){
